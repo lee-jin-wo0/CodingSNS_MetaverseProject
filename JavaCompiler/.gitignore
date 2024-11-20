@@ -1,0 +1,24 @@
+# Ignore IntelliJ IDEA specific files
+*.iml
+.idea/
+
+# Ignore Eclipse IDE specific files
+.project
+.classpath
+.settings/
+
+# Ignore Maven specific files
+target/
+
+# Ignore Gradle specific files
+.gradle/
+build/
+
+# Ignore Java compiled files
+*.class
+
+# Ignore logs
+*.log
+
+# Ignore temp files
+*.tmp

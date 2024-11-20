@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Java Compiler</title>
+    <link rel="icon" href="/icon/duke.ico" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("form").on("submit", function(event) {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/api/compile",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        sourceCode: $("#sourceCode").val()
+                    }),
+                    success: function(response) {
+                        console.log(response); // 응답을 로그에 출력
+                        if (response.token) {
+                            // 결과를 가져오기 위한 추가 요청
+                            setTimeout(function() { // 일정 시간 대기 후 결과 요청
+                                $.ajax({
+                                    type: "GET",
+                                    url: "/api/result/" + response.token, // 토큰으로 결과를 가져오기
+                                    success: function(result) {
+                                        $("#output").text(result.stdout || result); // 표준 출력 결과를 출력
+                                    },
+                                    error: function() {
+                                        $("#output").text("Error retrieving result.");
+                                    }
+                                });
+                            }, 2000); // 2초 후에 결과 요청
+                        } else {
+                            $("#output").text("Compilation error or invalid response.");
+                        }
+                    },
+                    error: function() {
+                        $("#output").text("An error occurred while compiling the code.");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Online Java Compiler</h1>
+    <form>
+        <textarea id="sourceCode" name="sourceCode" rows="20" cols="80" placeholder="Enter your Java code here"></textarea><br/>
+        <button type="submit">Compile</button>
+    </form>
+    <h2>Result:</h2>
+    <pre id="output"></pre>
+</body>
+</html>
